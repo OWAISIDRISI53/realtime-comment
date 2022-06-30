@@ -1,0 +1,108 @@
+const express = require("express");
+const app = express();
+const mongoose = require("mongoose");
+// const mainRouter = require("./routes/index");
+// const db = require("./mongoDb/db");
+const port = 80;
+
+app.set("view engine", "ejs");
+app.use(express.static("public"));
+
+app.use(express.urlencoded({ extended: false }));
+// app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+// app.use(mainRouter);
+
+// mongo db
+
+// import schema from model.js
+// const contactSchema = require("./model");
+
+const url = "mongodb://localhost/test";
+
+mongoose.connect(url, { useNewUrlParser: true });
+
+let db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error"));
+
+db.once("open", () => {
+  console.log("connected to mongodb");
+});
+
+const contactSchema = new mongoose.Schema({
+  username: String,
+  email: String,
+  query: String,
+});
+
+app.get("/", (req, res) => res.send("get"));
+
+app.post("/", (req, res, next) => {
+  let contacts = mongoose.model("contacts", contactSchema);
+
+  // let username = req.body.username;
+  // let email = req.body.email;
+  // let query = req.body.query;
+
+  let users = new contacts({
+    username: req.body.Username,
+    email: req.body.email,
+    query: req.body.textarea,
+  });
+
+  users
+    .save()
+    .then(() => {
+      console.log("saved to database");
+      // res.send("Information sented to the database");
+    })
+    .catch(() => {
+      console.log("Connont saved to database");
+    });
+
+  // res.render("./public/index");
+  res.send(req.body);
+  next();
+});
+
+const server = app.listen(port, () => {
+  console.log("server started on port 80");
+});
+
+
+
+
+===============================================
+===============================================
+        Todos
+===============================================
+===============================================
+
+Todos:
+[+] Create a npm project and install dependancies. express, moment, nodemon
+
+[+] create folders and files all we need. public, js, css, index, img
+
+[+] Setup express server server.js
+
+[+] do fontend part html and css
+
+[+] Post comment logic ,append to dom, install socket.io, emit event from client
+
+[+] Listen and broadcast event from server 
+
+[+] Listen for incoming events on client
+
+[+] Append comments animation
+
+[-] Typing... animation 
+
+[-] Sync with db: connect to Mongo DB,
+ install mongoose, create model
+
+[-] Create routes and db logic
+
+[-] Save a comment to db on post comment
+
+[-] Show comments from DB on load
